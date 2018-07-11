@@ -44,6 +44,15 @@ const ItemCntrl = (function(){
             data.items.push(newItem);
             return newItem;
         },
+        getTotalCalories: function(){
+            let total = 0;
+
+            data.items.forEach(function(item){
+                total += item.calories;
+            });
+            data.totalCalories = total;
+            return data.totalCalories;
+        },
         logData: function(){
             return data;
         }
@@ -58,7 +67,8 @@ const UICntrl = (function(){
         itemList: '#item-list',
         addBtn: '.add-btn',
         itemNameInput: '#item-name',
-        itemCaloriesInput: '#item-calories'
+        itemCaloriesInput: '#item-calories',
+        totalCalories: '.total-calories'
     };
     // Public methods
     return {
@@ -114,8 +124,10 @@ const UICntrl = (function(){
         // hide ul element if no items in UI
         hideList: function(){
             document.querySelector(UISelectors.itemList).style.display = 'none';
+        },
+        showTotalCalories: function(totalCalories){
+            document.querySelector(UISelectors.totalCalories).textContent = totalCalories;
         }
-
     };
 
 })();
@@ -140,12 +152,19 @@ const App = (function(ItemCntrl, UICntrl){
                 UICntrl.addListItem(newItem);
                 // clear fields after
                 UICntrl.clearInput();
+                // get total calories
+                const totalCalories = ItemCntrl.getTotalCalories();
+                UICntrl.showTotalCalories(totalCalories);
+
             }
             e.preventDefault();
         };
 
         // "Add meal" click event
         document.querySelector(UISelectors.addBtn).addEventListener('click', itemAddSubmit);
+
+
+
     };
 
     // Public Methods
@@ -160,6 +179,10 @@ const App = (function(ItemCntrl, UICntrl){
                 // Populate list with items
                 UICntrl.populateItemList(items);
             }
+
+            // get total calories
+            const totalCalories = ItemCntrl.getTotalCalories();
+            UICntrl.showTotalCalories(totalCalories);
 
             // Load Event Listeners
             loadEventListeners();
